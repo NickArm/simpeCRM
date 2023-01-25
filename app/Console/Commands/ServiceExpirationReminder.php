@@ -15,7 +15,7 @@ class ServiceExpirationReminder extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'auto:ServiceExpirationReminder';
 
     /**
      * The console command description.
@@ -29,6 +29,11 @@ class ServiceExpirationReminder extends Command
      *
      * @return int
      */
+
+     public function __construct()
+    {
+        parent::__construct();
+    }  
     public function handle()
     {
         
