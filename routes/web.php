@@ -19,21 +19,22 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'dashboard']);
+Route::get('/', [App\Http\Controllers\HomeController::class, 'dashboard'])->middleware('auth');
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/welcome', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
-Route::get('/customers', [App\Http\Controllers\CustomersController::class, 'index']);
 
+/* ------ customers routes ------ */
+Route::get('/logout', [App\Http\Controllers\HomeController::class, 'logout'])->name('logout');
 
-Route::get('/customer_edit/{id}', [App\Http\Controllers\CustomersController::class, 'edit']);
-Route::post('/sendmessage', [App\Http\Controllers\CustomersController::class, 'sendmessage']);
+Route::get('/customers', [App\Http\Controllers\CustomersController::class, 'index'])->middleware('auth');
+Route::get('/customer_edit/{id}', [App\Http\Controllers\CustomersController::class, 'edit'])->middleware('auth');
 
-Route::get('/services', [App\Http\Controllers\ServicesController::class, 'index']);
+/* ------ services routes ------ */
+Route::get('/services', [App\Http\Controllers\ServicesController::class, 'index'])->middleware('auth');
+
+/* ------ email routes ------ */
+Route::post('/sendmessage', [App\Http\Controllers\CustomersController::class, 'sendmessage'])->middleware('auth');

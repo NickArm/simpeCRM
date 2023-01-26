@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\customers;
 use App\Models\services;
 use Illuminate\Http\Request;
+use Session;
+use Auth;
+
 
 class HomeController extends Controller
 {
@@ -42,5 +45,12 @@ class HomeController extends Controller
 
         return view('welcome',compact('customers','services'));
 
+    }
+
+    public function logout()
+    {
+        Session::flush();
+        Auth::logout();
+        return redirect('login');
     }
 }
