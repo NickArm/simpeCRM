@@ -160,7 +160,7 @@
                                                 <tr class="odd gradeX">
 
                                                     <td>
-                                                        <a href="/customer_edit/{{ $b->id }}">{{ $b->customer_fname }}
+                                                        <a href="/customer_edit/{{ $b->customer_id }}">{{ $b->customer_fname }}
                                                             {{ $b->customer_lname }}
                                                         </a>
                                                     </td>

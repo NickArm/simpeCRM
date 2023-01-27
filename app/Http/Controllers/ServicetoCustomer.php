@@ -29,8 +29,23 @@ class ServicetoCustomer extends Controller
         $notes = $request->input('notes');
     
        $insert = DB::table('servicetocustomer')->insertGetId(['customer_id'=>$customer_id,'service_id'=>$service_id, 'price'=> $price, 'expiration' => $expiration, 'reminder'=>$reminder, 'paid_status'=> $paid_status,'notes'=>$notes ]);
-        dd($insert );
+
        return redirect ('/customer_edit/'.$customer_id)->with('success','Service Added');
+    }
+
+
+    public function delete_service_from_user(Request $request){
+        $customer_id = $request->input('customer_id');
+        $service_id = $request->input('service_id');
+
+
+        $del_serv = DB::table('servicetocustomer')
+        ->where('customer_id','=', $customer_id)
+        ->where('id','=', $service_id)
+        ->delete();
+
+       
+
     }
 }
 

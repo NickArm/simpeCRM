@@ -48,9 +48,15 @@ class SendMail extends Mailable
 
             view: 'emails.sendMessage',
             with: [
-                'your_message' => $this->data['your_message'],
+                'customer_name' => $this->data['customer_name'],
+                'service_name' => $this->data['service_name'],
+                'expiration' => $this->data['expiration'],
+
+                
             ],
-            
+
+
+
         );
     }
 

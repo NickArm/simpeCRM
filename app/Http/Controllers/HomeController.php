@@ -39,7 +39,7 @@ class HomeController extends Controller
         $customers = DB::table('servicetocustomer')
         ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
         ->join('customers', 'customers.id', '=', 'servicetocustomer.customer_id')
-        ->select('servicetocustomer.*', 'services.name as service_name', 'customers.fname as customer_fname', 'customers.lname as customer_lname')
+        ->select('servicetocustomer.*', 'services.name as service_name',  'customers.id as customer_id' ,'customers.fname as customer_fname', 'customers.lname as customer_lname')
         ->get();
 
 

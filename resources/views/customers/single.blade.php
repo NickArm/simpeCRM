@@ -51,15 +51,17 @@
                 <div class="container-xl px-4 mt-4">
                     <!-- Account page navigation-->
                     <nav class="nav nav-borders">
-                        <a class="nav-link active ms-0" href="account-profile.html">Profile</a>
-                        <a class="nav-link" href="account-billing.html">Billing</a>
-                        <a class="nav-link" href="account-security.html">Security</a>
-                        <a class="nav-link" href="account-notifications.html">Notifications</a>
+                        <a class="nav-link" data-toggle="tab" role="tab" href="#profile"
+                            aria-controls="profile">Profile</a>
+                        <a class="nav-link" data-toggle="tab" role="tab" href="#services"
+                            aria-controls="services">Services</a>
                     </nav>
                     <hr class="mt-0 mb-4">
-                    <div class="row">
+                    <div class="tab-content" id="myTabContent">
 
-                        <div class="col-xl-4">
+
+
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="services-tab">
                             <!-- Account details card-->
                             <div class="card mb-4">
                                 <div class="card-header">Account Details</div>
@@ -129,10 +131,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-8">
+                        <div class="tab-pane fade show active" id="services" role="tabpanel"
+                            aria-labelledby="profile-tab">
                             <!-- Profile picture card-->
                             <div class="card mb-4 mb-xl-0">
                                 <div class="card-header">Services</div>
+
                                 <div class="card-body text-center">
                                     <table class="table table-bordered" id="dataTable" width="100%"
                                         cellspacing="0">
@@ -144,6 +148,7 @@
                                                 <th>Εxpiration</th>
                                                 <th>Reminder</th>
                                                 <th>Paid</th>
+                                                <th>Actions</th>
                                             </tr>
                                         </thead>
                                         @foreach ($services as $b)
@@ -180,20 +185,36 @@
 
 
                                                 </td>
+                                                <td>
+                                                    <form action="/delete_service_from_user" method="post">
+                                                        {{ csrf_field() }}
+                                                        <input hidden type="text" name="service_id"
+                                                            value="{{ $b->id }}">
+                                                        <input hidden type="text" name="customer_id"
+                                                            value="{{ $cus->id }}">
+                                                        <a type="submit"
+                                                            class="submit-form delete_service_from_user"><i
+                                                                style="color: red;" class="fa-solid fa-trash"></i></a>
+                                                    </form>
+
+                                                </td>
 
                                             </tr>
                                         @endforeach
                                     </table>
+                                    <!-- Add Service button-->
+                                    <div class="row"> <button
+                                            style="margin-top: 20px;
+                                        margin-left: 12px;"
+                                            class="btn btn-primary" type="button" data-toggle="modal"
+                                            data-target="#addServiceModal">Add Service</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
-
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
 
@@ -250,7 +271,7 @@
                     @csrf
                     <div class="modal-body">
 
-                        <input name="email" type="email" class="form-control" id="email"
+                        <input readonly name="email" type="email" class="form-control" id="email"
                             value="{{ $cus->email }}">
 
                         <div class="form-group">
@@ -344,15 +365,26 @@
         </div>
     </div>
     <script>
-        $(document).on('click', '#reminder_changer', function() {
-            console.log('data');
-            var url = "/change_service_reminder";
-            var cus_id = $(this).val();
-            $.get(url + '/' + cus_id, function(data) {
-                //success data
-                console.log('data');
-
-            })
+        $(document).ready(function() {
+            $('.submit-form').on('click', function(e) {
+                e.preventDefault();
+                let form = $(this).closest('form');
+                let formActionUrl = form.attr('action');
+                let type = form.attr('method');
+                let formData = form.serialize();
+                $.ajax({
+                    url: formActionUrl,
+                    type: type,
+                    data: formData,
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        console.log(xhr.status);
+                        console.log(thrownError);
+                    }
+                });
+            });
         });
     </script>
 </body>

@@ -42,3 +42,4 @@ Route::post('/sendmessage', [App\Http\Controllers\CustomersController::class, 's
 
 /* ------ servicetocustomer routes ------ */
 Route::post('/addservicetocustomer', [App\Http\Controllers\ServicetoCustomer::class, 'store'])->middleware('auth');
+Route::post('/delete_service_from_user', [App\Http\Controllers\ServicetoCustomer::class, 'delete_service_from_user'])->middleware('auth');
