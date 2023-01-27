@@ -18,3 +18,5 @@
 <!-- Custom styles for this template-->
 <link href="{{ url('css/sb-admin-2.min.css') }}" rel="stylesheet">
 <link href="{{ url('vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<link href="{{ url('css/app.css') }}" rel="stylesheet">

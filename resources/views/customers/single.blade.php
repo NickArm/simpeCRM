@@ -64,7 +64,7 @@
                             <div class="card mb-4">
                                 <div class="card-header">Account Details</div>
                                 <div class="card-body">
-                                    <form>
+                                    <form id="single_customer_form">
                                         {{ csrf_field() }}
                                         <!-- Form Row-->
                                         <div class="row gx-3 mb-3">
@@ -120,7 +120,8 @@
                                         <!-- Save changes button-->
                                         <button class="btn btn-primary" type="button">Save changes</button>
                                         <!-- Add Service button-->
-                                        <button class="btn btn-primary" type="button">Add Service</button>
+                                        <button class="btn btn-primary" type="button" data-toggle="modal"
+                                            data-target="#addServiceModal">Add Service</button>
                                         <!-- Send Message button-->
                                         <button class="btn btn-primary" type="button" data-toggle="modal"
                                             data-target="#messageModal">Send Message</button>
@@ -162,7 +163,11 @@
                                                     {{ $b->expiration }}
                                                 </td>
                                                 <td>
-                                                    {{ $b->reminder }}
+                                                    <input type="checkbox" <?php if ($b->reminder) {
+                                                        echo 'checked';
+                                                    } ?> data-toggle="toggle"
+                                                        id="reminder_changer">
+
                                                 </td>
                                                 <td>
                                                     <a href="#" style="font-size: 0.5rem;"
@@ -266,6 +271,90 @@
         </div>
     </div>
 
+    <!-- Add Service Modal -->
+    <div class="modal" id="addServiceModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Service to {{ $cus->fname }} {{ $cus->lname }}</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <form method="POST" action="/addservicetocustomer">
+                    <div class="modal-body">
+                        {{ csrf_field() }}
+                        <!-- Form Row        -->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (organization name)-->
+
+                            <input hidden id="customer_id" name="customer_id" type="text"
+                                value="{{ $cus->id }}">
+                            <div class="col-md-12">
+                                <label class="small mb-1" for="inputOrgName">Choose Service</label>
+                                @php
+                                    $services = App\Http\Controllers\ServicesController::show();
+                                @endphp
+                                <select class="form-control" name="service_id" id="service_id">
+                                    @foreach ($services as $s)
+                                        <option value="{{ $s->id }}">{{ $s->name }}</option>
+                                    @endforeach
+                                </select>
+
+
+                            </div>
+                            <!-- Form Group (location)-->
+                            <div class="col-md-12">
+                                <label class="small mb-1" for="expiration">Expiration</label>
+                                <input class="form-control" id="expiration" name="expiration" type="date">
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="small mb-1" for="price">Price</label>
+                                <input class="form-control" id="price" name="price" type="number">
+                            </div>
+                        </div>
+
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (phone number)-->
+                            <div class="col-md-12">
+                                <label class=" mb-1" for="inputEmailAddress">Set Reminder</label>
+                                <input type="checkbox" id="reminder" name="reminder">
+                            </div>
+                            <!-- Form Group (email)-->
+                            <div class="col-md-12">
+                                <label class=" mb-1" for="inputEmailAddress">Is paid?</label>
+                                <input type="checkbox" id="paid_status" name="paid_status">
+                            </div>
+                            <div class="col-md-12">
+                                <label class=" mb-1" for="inputEmailAddress">Notes</label>
+                                <input type="text" id="notes" name="notes">
+                            </div>
+                        </div>
+
+                        <!-- Save changes button-->
+                        <button class="btn btn-primary" type="submit">Save changes</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).on('click', '#reminder_changer', function() {
+            console.log('data');
+            var url = "/change_service_reminder";
+            var cus_id = $(this).val();
+            $.get(url + '/' + cus_id, function(data) {
+                //success data
+                console.log('data');
+
+            })
+        });
+    </script>
 </body>
 
 </html>

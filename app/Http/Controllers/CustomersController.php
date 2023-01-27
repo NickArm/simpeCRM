@@ -36,7 +36,17 @@ class CustomersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $fname = $request->input('fname');
+        $lname = $request->input('lname');
+        $company = $request->input('company');
+        $email = $request->input('email');
+        $phone = $request->input('phone');
+        $address = $request->input('address');
+    
+       $insert = DB::table('customers')->insertGetId(['fname'=>$fname,'lname'=>$lname,'email'=>$email,'phone'=>$phone,'address'=>$address,'company'=>$company ]);
+
+    //Customer::create( $attributes);
+       return redirect ('/customers')->with('success','New Customer Added');
     }
 
     /**

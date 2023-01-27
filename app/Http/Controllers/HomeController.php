@@ -47,6 +47,25 @@ class HomeController extends Controller
 
     }
 
+    public static function finance()
+    {
+        $earnings = DB::table('servicetocustomer')
+        ->where('paid_status','=','1')
+        ->sum('price');
+        
+        $debts = DB::table('servicetocustomer')
+        ->where('paid_status','=','0')
+        ->sum('price');
+
+        $customers = Customers::count();
+
+        $finance=[$earnings,$debts, $customers];
+
+        return $finance;
+        //dd($price);
+    }
+
+
     public function logout()
     {
         Session::flush();

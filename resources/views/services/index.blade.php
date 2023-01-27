@@ -29,8 +29,16 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Services</h1>
-
+                    <div class='row'>
+                        <div class='col'>
+                            <h1 class="h3 mb-2 text-gray-800">Services</h1>
+                        </div>
+                        <div class='col text-right '>
+                            <button class="btn btn-primary" type="button" data-toggle="modal"
+                                data-target="#newserviceModal">Add
+                                New Service</button>
+                        </div>
+                    </div>
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
 
@@ -58,7 +66,7 @@
                                                 {{ $b->name }}
                                             </td>
                                             <td>
-                                                {{ $b->descriptiom }}
+                                                {{ $b->description }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -107,6 +115,47 @@
             </div>
         </div>
     </div>
+
+    <!-- Add New Customer Modal -->
+    <div class="modal" id="newserviceModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Service</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form action="/service_add" method="post">
+                        {{ csrf_field() }}
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (first name)-->
+                            <div class="col-md-12">
+                                <label class="small mb-1" for="inputFirstName">Name</label>
+                                <input class="form-control" id="name" name="name" type="text"
+                                    placeholder="Enter service name">
+                            </div>
+                            <!-- Form Group (last name)-->
+                            <div class="col-md-12">
+                                <label class="small mb-1" for="inputLastName">Description</label>
+                                <input class="form-control" id="description" name="description" type="text"
+                                    placeholder="Enter a description">
+                            </div>
+                        </div>
+
+                        <!-- Save changes button-->
+                        <button class="btn btn-primary" type="submit">Save changes</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <x-main_scripts></x-main_scripts>
 

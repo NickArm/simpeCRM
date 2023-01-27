@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\services;
+
+use Illuminate\Support\Facades\DB;
+use App\Models\ServicetoCustomer;
+use App\Models\Services;
 use Illuminate\Http\Request;
 
 class ServicesController extends Controller
@@ -15,6 +18,13 @@ class ServicesController extends Controller
     public function index()
     {
         return view('services.index',[ 'services'=>Services::all() ]);
+    }
+
+
+    public static function  count_each_service($id)
+    {
+        $sc = ServicetoCustomer::where('service_id', $id)->count();
+        return $sc;
     }
 
     /**
@@ -35,7 +45,12 @@ class ServicesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $name = $request->input('name');
+        $description = $request->input('description');
+     
+    
+       $insert = DB::table('services')->insertGetId(['name'=>$name,'description'=>$description ]);
+       return redirect ('/services')->with('success','New Service Added');
     }
 
     /**
@@ -44,9 +59,10 @@ class ServicesController extends Controller
      * @param  \App\Models\services  $services
      * @return \Illuminate\Http\Response
      */
-    public function show(services $services)
+    public static function show()
     {
-        //
+        $services = Services::all();
+        return $services;
     }
 
     /**

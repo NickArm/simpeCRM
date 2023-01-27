@@ -32,9 +32,13 @@ Route::get('/logout', [App\Http\Controllers\HomeController::class, 'logout'])->n
 
 Route::get('/customers', [App\Http\Controllers\CustomersController::class, 'index'])->middleware('auth');
 Route::get('/customer_edit/{id}', [App\Http\Controllers\CustomersController::class, 'edit'])->middleware('auth');
+Route::post('/customer_add', [App\Http\Controllers\CustomersController::class, 'store'])->middleware('auth');
 
 /* ------ services routes ------ */
 Route::get('/services', [App\Http\Controllers\ServicesController::class, 'index'])->middleware('auth');
-
+Route::post('/service_add', [App\Http\Controllers\ServicesController::class, 'store'])->middleware('auth');
 /* ------ email routes ------ */
 Route::post('/sendmessage', [App\Http\Controllers\CustomersController::class, 'sendmessage'])->middleware('auth');
+
+/* ------ servicetocustomer routes ------ */
+Route::post('/addservicetocustomer', [App\Http\Controllers\ServicetoCustomer::class, 'store'])->middleware('auth');
