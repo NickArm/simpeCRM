@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\ServicetoCustomer;
-use App\Models\Services;
+use App\Models\services;
 use Illuminate\Http\Request;
 
 class ServicesController extends Controller

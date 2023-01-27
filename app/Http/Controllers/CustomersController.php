@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use App\Models\customers;
+use App\Models\services;
 use Illuminate\Http\Request;
 use Mail;
 use App\Mail\SendMail;
