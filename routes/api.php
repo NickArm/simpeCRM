@@ -24,7 +24,7 @@ Route::get('customers', function() {
     return Customers::all();
 });
 
-Route::get('customers', function($id) {
+Route::get('customers/{id}', function($id) {
     return Customers::find($id);
 });
 
