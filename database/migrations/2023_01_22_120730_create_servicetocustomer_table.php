@@ -18,10 +18,10 @@ return new class extends Migration
             $table->foreignId('customer_id');
             $table->foreignId('service_id');
             $table->float('price');
-            $table->date('expiration');
+            $table->date('expiration')->nullable();
             $table->boolean('reminder');
             $table->boolean('paid_status');
-            $table->string('notes');
+            $table->string('notes')->nullable();
             $table->timestamps();
         });
     }
