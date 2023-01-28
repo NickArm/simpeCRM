@@ -24,6 +24,9 @@ Route::get('customers', function() {
     return Customers::all();
 });
 
+Route::get('customers', function($id) {
+    return Customers::find($id);
+});
 
 Route::get('services', function() {
     return Services::all();
@@ -42,7 +45,6 @@ Route::get('servicetocustomer', function() {
         ->join('customers', 'customers.id', '=', 'servicetocustomer.customer_id')
         ->select('servicetocustomer.*', 'services.name as service_name',  'customers.id as customer_id' ,'customers.fname as customer_fname', 'customers.lname as customer_lname')
         ->get();
-
 
         return $customers;
 });
