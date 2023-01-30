@@ -77,9 +77,27 @@ class CustomersController extends Controller
         ->select('servicetocustomer.*', 'services.name as service_name')
         ->get();
 
+        $payments = DB::table('payments')
+        ->join('servicetocustomer', 'servicetocustomer.id', '=', 'payments.servicetocustomer_id')
+        ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
+        ->where('payments.customer_id', '=', $id)
+        ->select('payments.*','services.name as servname')
+        ->get();
 
-        return view('customers.single',compact('cus','services'));
+        $unpaid_payments = DB::table('servicetocustomer')
+        ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
+        ->where('servicetocustomer.customer_id', '=', $id)
+        ->whereNOTIN('servicetocustomer.id',
+            DB::table('payments')->select('servicetocustomer_id')
+        )
+        ->select('servicetocustomer.*', 'services.name as servname' )
+        ->get();
+
+        //dd($unpaid_payments);
+        return view('customers.single',compact('cus','services','payments','unpaid_payments'));
     }
+
+
 
     public function sendmessage(Request $request)
     {
