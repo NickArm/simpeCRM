@@ -37,6 +37,10 @@ Route::post('/customer_add', [App\Http\Controllers\CustomersController::class, '
 /* ------ services routes ------ */
 Route::get('/services', [App\Http\Controllers\ServicesController::class, 'index'])->middleware('auth');
 Route::post('/service_add', [App\Http\Controllers\ServicesController::class, 'store'])->middleware('auth');
+
+/* ------ payments routes ------ */
+Route::post('/addpayment', [App\Http\Controllers\PaymentsController::class, 'store'])->middleware('auth');
+
 /* ------ email routes ------ */
 Route::post('/sendmessage', [App\Http\Controllers\CustomersController::class, 'sendmessage'])->middleware('auth');
 

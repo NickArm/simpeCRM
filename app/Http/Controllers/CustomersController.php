@@ -71,11 +71,15 @@ class CustomersController extends Controller
     {
         
         $cus = Customers::where('id', $id)->firstOrFail();
+
         $services = DB::table('servicetocustomer')
         ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
+        ->leftjoin('payments', 'payments.servicetocustomer_id', '=', 'servicetocustomer.id' )
         ->where('servicetocustomer.customer_id', '=', $id)
-        ->select('servicetocustomer.*', 'services.name as service_name')
+        ->select('servicetocustomer.*', 'services.name as service_name', 'payments.id as payment_id')
         ->get();
+
+        //dd($services);
 
         $payments = DB::table('payments')
         ->join('servicetocustomer', 'servicetocustomer.id', '=', 'payments.servicetocustomer_id')

@@ -177,7 +177,7 @@
                                                 <td>
                                                     <a href="#" style="font-size: 0.5rem;"
                                                         class="btn 
-                                                        <?php if ($b->paid_status == 0) {
+                                                        <?php if (empty($b->payment_id)) {
                                                             echo 'btn-danger';
                                                         } else {
                                                             echo 'btn-success';
@@ -187,14 +187,19 @@
                                                         <span class="icon text-white-50">
                                                             <i class="fas fa-check"></i>
                                                         </span>
-                                                        <span class="text"><?php if ($b->paid_status == 0) {
+                                                        <span class="text"><?php if (empty($b->payment_id)) {
                                                             echo 'unpaid';
                                                         } else {
                                                             echo 'paid';
                                                         } ?></span>
                                                     </a>
-                                                    <?php if ($b->paid_status == 0) {
-                                                        echo '<a style="font-size: 10px;" href="#">PAY NOW</a>';
+                                                    <input hidden value="{{ $b->id }}"
+                                                        name="getservicetocustomer_id"
+                                                        class="getservicetocustomer_id">
+                                                    <?php if (empty($b->payment_id)) {
+                                                        echo '<a style="font-size: 10px;" onclick="openpaynowmdal(' . $b->id . ')" href="#">PAY NOW</a>';
+                                                    } else {
+                                                        echo '<a style="font-size: 10px;"   href="#">VIEW PAYMENT</a>';
                                                     } ?>
 
 
@@ -250,6 +255,7 @@
                                             <tr class="odd gradeX">
 
                                                 <td>
+
                                                     {{ $b->servname }}
                                                 </td>
                                                 <td>
@@ -265,10 +271,6 @@
                                                 <td>
                                                     {{ $b->notes }}
                                                 </td>
-
-
-
-
                                             </tr>
                                         @endforeach
                                     </table>
@@ -446,7 +448,7 @@
                     </div>
 
                     <!-- Modal body -->
-                    <form method="POST" action="/addservicetocustomer">
+                    <form method="POST" action="/addpayment">
                         <div class="modal-body">
                             {{ csrf_field() }}
                             <!-- Form Row        -->
@@ -458,7 +460,8 @@
                                 <div class="col-md-12">
                                     <label class="small mb-1" for="inputOrgName">Choose UnPaid Service</label>
 
-                                    <select class="form-control" name="service_id" id="service_id">
+                                    <select class="form-control" name="servicetocustomer_id"
+                                        id="servicetocustomer_id">
                                         @foreach ($unpaid_payments as $s)
                                             <option>Choose Unpaid Service</option>
                                             <option value="{{ $s->id }}">
@@ -471,8 +474,8 @@
 
                                 </div>
                                 <div class="col-md-12">
-                                    <label class="small mb-1" for="custom_payment">Or Create a Custom Payment</label>
-                                    <input class="form-control" id="custom_payment" name="custom_payment"
+                                    <label class="small mb-1" for="custom_servce">Or Create a Custom Service</label>
+                                    <input class="form-control" id="custom_servce" name="custom_servce"
                                         type="text">
                                 </div>
 
@@ -481,6 +484,12 @@
                                     <label class="small mb-1" for="payment_date">Payment Date</label>
                                     <input class="form-control" id="payment_date" name="payment_date"
                                         type="date">
+                                </div>
+
+                                <!-- Form Group (location)-->
+                                <div class="col-md-12">
+                                    <label class="small mb-1" for="price">Price</label>
+                                    <input class="form-control" id="price" name="price" type="text">
                                 </div>
 
                                 <div class="col-md-12">
@@ -531,7 +540,20 @@
                         }
                     });
                 });
+
+                $('#paynowbtn').on('click', function(e) {
+                    e.preventDefault();
+                    $('#addPaymentModal').modal('show');
+                    document.getElementById('servicetocustomer_id').value = document.getElementsByClassName(
+                        'getservicetocustomer_id').value
+                    console.log(document.getElementsByClassName('getservicetocustomer_id').value);
+                })
             });
+
+            function openpaynowmdal(id) {
+                $('#addPaymentModal').modal('show');
+                document.getElementById('servicetocustomer_id').value = id;
+            }
         </script>
 </body>
 
