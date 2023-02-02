@@ -39,6 +39,7 @@ Route::get('/services', [App\Http\Controllers\ServicesController::class, 'index'
 Route::post('/service_add', [App\Http\Controllers\ServicesController::class, 'store'])->middleware('auth');
 
 /* ------ payments routes ------ */
+Route::get('/payments', [App\Http\Controllers\PaymentsController::class, 'index'])->middleware('auth');
 Route::post('/addpayment', [App\Http\Controllers\PaymentsController::class, 'store'])->middleware('auth');
 
 /* ------ email routes ------ */

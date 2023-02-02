@@ -30,6 +30,12 @@
             <span>Show Services</span></a>
     </li>
 
+    <li class="nav-item active">
+        <a class="nav-link" href="/payments">
+            <i class="fas fa-fw fa-credit-card"></i>
+            <span>Show Payments</span></a>
+    </li>
+
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

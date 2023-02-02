@@ -2,11 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PaymentsController extends Controller
 {
+    public function index(Request $request)
+    {
+        $payments = DB::table('payments')
+        ->join('servicetocustomer', 'servicetocustomer.id', '=', 'payments.servicetocustomer_id')
+        ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
+        ->join('customers', 'customers.id', '=', 'payments.customer_id')
+        ->select('payments.*','services.name as servname','customers.fname as cusfname','customers.lname as cuslname')
+        ->get();
+
+
+        return view('payments.index',compact('payments'));
+    }
+
     public function store(Request $request)
     {
         $customer_id = $request->input('customer_id');
