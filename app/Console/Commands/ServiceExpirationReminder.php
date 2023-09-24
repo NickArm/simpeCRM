@@ -47,7 +47,7 @@ class ServiceExpirationReminder extends Command
         foreach($services as $s){
             
 
-            if ($s->expiration == date("Y-m-d", strtotime("-30 days")))
+            if ($s->expiration == date("Y-m-d", strtotime("+30 days")))
             {
                 //var_dump($s);
                 echo "30 days expiration";  
@@ -60,7 +60,7 @@ class ServiceExpirationReminder extends Command
                 Mail::to($s->email)->send(new SendMail($data));
 
 
-            }elseif ($s->expiration == date("Y-m-d", strtotime("-15 days"))){
+            }elseif ($s->expiration == date("Y-m-d", strtotime("+15 days"))){
                 echo "15 days expiration";
                 $data = [
                     'email' => $s->email,
@@ -69,7 +69,7 @@ class ServiceExpirationReminder extends Command
                     'expiration'=> $s->expiration
                 ];
                 Mail::to($s->email)->send(new SendMail($data));
-            }elseif ($s->expiration == date("Y-m-d", strtotime("-5 days"))){
+            }elseif ($s->expiration == date("Y-m-d", strtotime("+5 days"))){
                 echo "5 days expiration";
                 $data = [
                     'email' => $s->email,
@@ -92,7 +92,7 @@ class ServiceExpirationReminder extends Command
         }
         //var_dump($services);
 
-       echo date("Y-m-d", strtotime("-30 days")) ;
+       echo date("Y-m-d", strtotime("+30 days")) ;
        //2022-12-25
     }
 }
