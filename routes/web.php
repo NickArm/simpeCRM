@@ -56,3 +56,8 @@ Route::post('/servicetocustomer/update_reminder_status', 'App\Http\Controllers\S
 Route::post('/service/{id}/renew', [App\Http\Controllers\ServicetoCustomerController::class, 'renewService'])->name('service.renew');
 
 Route::get('/servicetocustomer/{servicetocustomer}/details', [App\Http\Controllers\ServicetoCustomerController::class, 'showServiceDetails'])->name('servicetocustomer.details');
+
+/* ------ tools routes ------ */
+Route::get('/tools', [App\Http\Controllers\CustomersController::class, 'showTools'])->name('tools.show');
+Route::post('/export-customers', [App\Http\Controllers\CustomersController::class, 'exportCustomers'])->name('export.customers');
+Route::post('/import-customers', [App\Http\Controllers\CustomersController::class, 'importCustomers'])->name('import.customers');

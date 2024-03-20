@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CustomersExport;
+use App\Imports\CustomersImport;
 use App\Mail\SendMail;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Mail;
 
 class CustomersController extends Controller
@@ -58,15 +61,13 @@ class CustomersController extends Controller
             ->select(
                 'servicetocustomer.*',
                 'services.name as service_name',
-                'payments.id as payment_id', // Assuming you want to check if there's a payment made
-                'payments.price as payment_amount', // Assuming you want the payment amount
+                'payments.id as payment_id',
+                'payments.price as payment_amount',
                 'payments.payment_date',
                 'payments.payment_type',
                 'payments.notes as payment_notes'
             )
             ->get();
-
-        //dd($services);
 
         $payments = DB::table('payments')
             ->join('servicetocustomer', 'servicetocustomer.payment_id', '=', 'payments.id')
@@ -82,7 +83,6 @@ class CustomersController extends Controller
             ->select('servicetocustomer.*', 'services.name as servname')
             ->get();
 
-        //dd($unpaid_payments);
         return view('customers.single', compact('cus', 'services', 'payments', 'unpaid_payments', 'servicetocustomer'));
     }
 
@@ -104,5 +104,22 @@ class CustomersController extends Controller
     public function destroy(Customer $customers)
     {
         //
+    }
+
+    public function showTools()
+    {
+        return view('tools');
+    }
+
+    public function exportCustomers()
+    {
+        return Excel::download(new CustomersExport, 'customers.xlsx');
+    }
+
+    public function importCustomers(Request $request)
+    {
+        Excel::import(new CustomersImport, $request->file('file'));
+
+        return redirect('/')->with('success', 'All good!');
     }
 }
