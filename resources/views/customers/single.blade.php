@@ -217,6 +217,7 @@
                                                     @endif
                                                     
                                                     <button class="btn btn-info btn-sm btn-edit-service" data-id="{{ $b->id }}" data-toggle="modal" data-target="#editServicetoCustomerModal">Edit</button>
+                                                    <a href="{{ route('servicetocustomer.details', $b->id) }}" class="btn btn-info btn-sm">Details</a>
                                                     <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $b->id }}, '{{ $b->reminder ? 'true' : 'false' }}')">Delete</button>
                                                     <form id="delete_service_form_{{ $b->id }}" action="{{ route('servicetocustomer.destroy', $b->id) }}" method="post">
                                                         @csrf

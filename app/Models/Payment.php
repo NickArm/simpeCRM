@@ -21,6 +21,6 @@ class Payment extends Model
 
     public function servicetocustomer()
     {
-        return $this->belongsTo(ServicetoCustomer::class);
+        return $this->hasOne(ServicetoCustomer::class, 'payment_id');
     }
 }

@@ -54,3 +54,5 @@ Route::delete('/servicetocustomer/{servicetocustomer}', 'App\Http\Controllers\Se
 Route::post('/servicetocustomer/update_reminder_status', 'App\Http\Controllers\ServicetoCustomerController@updateReminderStatus')->name('servicetocustomer.update_reminder_status');
 
 Route::post('/service/{id}/renew', [App\Http\Controllers\ServicetoCustomerController::class, 'renewService'])->name('service.renew');
+
+Route::get('/servicetocustomer/{servicetocustomer}/details', [App\Http\Controllers\ServicetoCustomerController::class, 'showServiceDetails'])->name('servicetocustomer.details');

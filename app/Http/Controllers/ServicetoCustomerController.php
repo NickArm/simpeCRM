@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\ServicetoCustomer;
 use App\Models\ServicetoCustomerRecord;
 use App\Services\RenewalService;
@@ -118,6 +119,24 @@ class ServicetoCustomerController extends Controller
         } else {
             return back()->with('error', 'Service cannot be removed. All associated services must be paid and without reminders.');
         }
+    }
+
+    public function showServiceDetails($servicetocustomerId)
+    {
+        $serviceToCustomer = ServicetoCustomer::with('service', 'customer')
+            ->findOrFail($servicetocustomerId);
+
+        $renewals = ServicetoCustomerRecord::where('servicetocustomer_id', $servicetocustomerId)->get();
+
+        $paymentIds = $renewals->pluck('payment_id')->filter();
+
+        $payments = Payment::whereIn('id', $paymentIds)->get();
+
+        return view('customers.records.index', [
+            'serviceToCustomer' => $serviceToCustomer,
+            'renewals' => $renewals,
+            'payments' => $payments,
+        ]);
     }
 
     public function updateReminderStatus(Request $request)
