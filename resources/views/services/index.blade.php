@@ -44,21 +44,17 @@
 
                         <div class="card-body">
                             <div class="table-responsive">
-
-
-
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Description</th>
-
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     @foreach ($services as $b)
                                         <tr class="odd gradeX">
-
                                             <td>
                                                 {{ $b->id }}
                                             </td>
@@ -67,6 +63,14 @@
                                             </td>
                                             <td>
                                                 {{ $b->description }}
+                                            </td>
+                                            <td>
+                                            <button class="btn btn-info btn-sm btn-edit-service" data-id="{{ $b->id }}" data-toggle="modal" data-target="#editServiceModal">Edit</button>
+                                            <form method="POST" action="{{ url('/services/' . $b->id) }}" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-danger btn-sm btn-delete-service" data-id="{{ $b->id }}">Delete</button>
+                                            </form>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -77,17 +81,13 @@
 
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
-
             <!-- Footer -->
             <x-footer></x-footer>
             <!-- End of Footer -->
-
         </div>
         <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
 
@@ -146,19 +146,91 @@
                                     placeholder="Enter a description">
                             </div>
                         </div>
-
                         <!-- Save changes button-->
                         <button class="btn btn-primary" type="submit">Save changes</button>
-
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
+<!-- Edit Service Modal -->
+<div class="modal" id="editServiceModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Service</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form id="edit-form" method="post">
+                    @csrf
+                    @method('PUT') <!-- Specify the HTTP method to use when sending data -->
+
+                    <!-- Name Field -->
+                    <div class="form-group">
+                        <label for="edit-name">Name</label>
+                        <input type="text" id="edit-name" name="name" class="form-control" required>
+                    </div>
+
+                    <!-- Description Field -->
+                    <div class="form-group">
+                        <label for="edit-description">Description</label>
+                        <input type="text" id="edit-description" name="description" class="form-control" required>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">Update Service</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
     <x-main_scripts></x-main_scripts>
+    <script>
+    function editService(serviceId) {
+        $.get('/services/' + serviceId + '/edit', function (service) {
+            $('#edit-name').val(service.name);
+            $('#edit-description').val(service.description);
+            $('#edit-form').attr('action', '/services/' + serviceId);
+        });
+    }
+
+    $(document).ready(function() {
+        $('.btn-edit-service').on('click', function() {
+            var serviceId = $(this).data('id'); // Get the ID from the data attribute
+            $.ajax({
+                url: '/services/' + serviceId + '/edit',
+                type: 'GET',
+                success: function(service) {
+                    $('#edit-name').val(service.name);
+                    $('#edit-description').val(service.description);
+                    $('#edit-form').attr('action', '/services/' + serviceId);
+                    $('#editServiceModal').modal('show');
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        });
+
+        $('.btn-delete-service').on('click', function() {
+            var serviceId = $(this).data('id');
+            var confirmDelete = confirm('Are you sure you want to delete this service?');
+            if (confirmDelete) {
+                // Find the form next to this button and submit it
+                $(this).closest('form').submit();
+            }
+        });
+    });
+    </script>
 
 </body>
+
 
 </html>

@@ -9,17 +9,22 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         Commands\ServiceExpirationReminder::class,
+        Commands\TestEmail::class,
     ];
+
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('auto:ServiceExpirationReminder')->everyMinute();
+
+        // $schedule->call(function () {
+        //     (new RenewalService())->checkForServiceRenewals();
+        // })->daily();
     }
 
     /**

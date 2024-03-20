@@ -61,7 +61,7 @@
                                         <tr class="odd gradeX">
 
                                             <td>
-                                                {{ $b->cusfname }} {{ $b->cuslname }}</a>
+                                                {{ $b->servicetocustomer->customer->fname }} {{ $b->servicetocustomer->customer->lname }}</a>
                                             </td>
 
                                             <td>

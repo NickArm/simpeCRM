@@ -1,40 +1,25 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\DB;
-use App\Models\customers;
-use App\Models\services;
-use Illuminate\Http\Request;
-use Mail;
+
 use App\Mail\SendMail;
+use App\Models\Customer;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Mail;
+
 class CustomersController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        return view('customers.index',[ 'customers'=>Customers::all() ]);
+        return view('customers.index', ['customers' => Customer::all()]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $fname = $request->input('fname');
@@ -43,98 +28,80 @@ class CustomersController extends Controller
         $email = $request->input('email');
         $phone = $request->input('phone');
         $address = $request->input('address');
-    
-       $insert = DB::table('customers')->insertGetId(['fname'=>$fname,'lname'=>$lname,'email'=>$email,'phone'=>$phone,'address'=>$address,'company'=>$company ]);
 
-    //Customer::create( $attributes);
-       return redirect ('/customers')->with('success','New Customer Added');
+        $insert = DB::table('customers')->insertGetId(['fname' => $fname, 'lname' => $lname, 'email' => $email, 'phone' => $phone, 'address' => $address, 'company' => $company]);
+
+        return redirect('/customers')->with('success', 'New Customer Added');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\customers  $customers
-     * @return \Illuminate\Http\Response
-     */
-    public function show(customers $customers)
+    public function show(Customer $customers)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\customers  $customers
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        
-        $cus = Customers::where('id', $id)->firstOrFail();
+
+        $cus = Customer::where('id', $id)->firstOrFail();
+
+        $servicetocustomer = DB::table('servicetocustomer')
+            ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
+            ->leftJoin('payments', 'payments.id', '=', 'servicetocustomer.payment_id')
+            ->where('servicetocustomer.customer_id', '=', $id)
+            ->select('servicetocustomer.*', 'services.name as service_name', 'payments.id as payment_id')
+            ->get();
 
         $services = DB::table('servicetocustomer')
-        ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
-        ->leftjoin('payments', 'payments.servicetocustomer_id', '=', 'servicetocustomer.id' )
-        ->where('servicetocustomer.customer_id', '=', $id)
-        ->select('servicetocustomer.*', 'services.name as service_name', 'payments.id as payment_id')
-        ->get();
+            ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
+            ->leftJoin('payments', 'payments.id', '=', 'servicetocustomer.payment_id')
+            ->where('servicetocustomer.customer_id', '=', $id)
+            ->select(
+                'servicetocustomer.*',
+                'services.name as service_name',
+                'payments.id as payment_id', // Assuming you want to check if there's a payment made
+                'payments.price as payment_amount', // Assuming you want the payment amount
+                'payments.payment_date',
+                'payments.payment_type',
+                'payments.notes as payment_notes'
+            )
+            ->get();
 
         //dd($services);
 
         $payments = DB::table('payments')
-        ->join('servicetocustomer', 'servicetocustomer.id', '=', 'payments.servicetocustomer_id')
-        ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
-        ->where('payments.customer_id', '=', $id)
-        ->select('payments.*','services.name as servname')
-        ->get();
+            ->join('servicetocustomer', 'servicetocustomer.payment_id', '=', 'payments.id')
+            ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
+            ->where('servicetocustomer.customer_id', '=', $id)
+            ->select('payments.*', 'services.name as servname')
+            ->get();
 
         $unpaid_payments = DB::table('servicetocustomer')
-        ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
-        ->where('servicetocustomer.customer_id', '=', $id)
-        ->whereNOTIN('servicetocustomer.id',
-            DB::table('payments')->select('servicetocustomer_id')
-        )
-        ->select('servicetocustomer.*', 'services.name as servname' )
-        ->get();
+            ->join('services', 'services.id', '=', 'servicetocustomer.service_id')
+            ->where('servicetocustomer.customer_id', '=', $id)
+            ->whereNull('servicetocustomer.payment_id')
+            ->select('servicetocustomer.*', 'services.name as servname')
+            ->get();
 
         //dd($unpaid_payments);
-        return view('customers.single',compact('cus','services','payments','unpaid_payments'));
+        return view('customers.single', compact('cus', 'services', 'payments', 'unpaid_payments', 'servicetocustomer'));
     }
-
-
 
     public function sendmessage(Request $request)
     {
-        //dd($request);
         $data = [
-            'email' =>  $request->email,
-            'your_message'=>$request->your_message,
+            'email' => $request->email,
+            'your_message' => $request->your_message,
         ];
 
         Mail::to($request->email)->send(new SendMail($data));
-
-        //dd('Success! Email has been sent successfully.');
-     
     }
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\customers  $customers
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, customers $customers)
+
+    public function update(Request $request, Customer $customers)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\customers  $customers
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(customers $customers)
+    public function destroy(Customer $customers)
     {
         //
     }

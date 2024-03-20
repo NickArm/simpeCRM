@@ -168,10 +168,12 @@
                                                     {{ $b->expiration }}
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" <?php if ($b->reminder) {
-                                                        echo 'checked';
-                                                    } ?> data-toggle="toggle"
-                                                        id="reminder_changer">
+                                                <input type="checkbox" 
+                                                        class="reminder_changer" 
+                                                        data-id="{{ $b->id }}" 
+                                                        {{ $b->reminder ? 'checked' : '' }} 
+                                                        data-toggle="toggle">
+
 
                                                 </td>
                                                 <td>
@@ -197,7 +199,7 @@
                                                         name="getservicetocustomer_id"
                                                         class="getservicetocustomer_id">
                                                     <?php if (empty($b->payment_id)) {
-                                                        echo '<a style="font-size: 10px;" onclick="openpaynowmdal(' . $b->id . ')" href="#">PAY NOW</a>';
+                                                        echo '<a style="font-size: 10px;" onclick="openpaynowmdal('.$b->id.')" href="#">PAY NOW</a>';
                                                     } else {
                                                         echo '<a style="font-size: 10px;"   href="#">VIEW PAYMENT</a>';
                                                     } ?>
@@ -205,20 +207,27 @@
 
                                                 </td>
                                                 <td>
-                                                    <form action="/delete_service_from_user" method="post">
-                                                        {{ csrf_field() }}
-                                                        <input hidden type="text" name="service_id"
-                                                            value="{{ $b->id }}">
-                                                        <input hidden type="text" name="customer_id"
-                                                            value="{{ $cus->id }}">
-                                                        <a type="submit"
-                                                            class="submit-form delete_service_from_user"><i
-                                                                style="color: red;" class="fa-solid fa-trash"></i></a>
+                                                    @if(\Carbon\Carbon::parse($b->expiration)->diffInDays(now()) <= 30)
+                                                        <!-- Show renew button if service is expiring in 30 days or less -->
+                                                        <button class="btn btn-primary btn-sm btn-renew-service"
+                                                            data-id="{{ $b->id }}"
+                                                            data-service-name="{{ $b->service_name }}"
+                                                            data-price="{{ $b->price }}"
+                                                            data-expiration="{{ $b->expiration }}">Renew</button>
+                                                    @endif
+                                                    
+                                                    <button class="btn btn-info btn-sm btn-edit-service" data-id="{{ $b->id }}" data-toggle="modal" data-target="#editServicetoCustomerModal">Edit</button>
+                                                    <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $b->id }}, '{{ $b->reminder ? 'true' : 'false' }}')">Delete</button>
+                                                    <form id="delete_service_form_{{ $b->id }}" action="{{ route('servicetocustomer.destroy', $b->id) }}" method="post">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <input type="hidden" name="service_id" value="{{ $b->id }}">
+                                                        <input type="hidden" name="customer_id" value="{{ $cus->id }}">
+                                          
                                                     </form>
-
                                                 </td>
 
-                                            </tr>
+                                            </tr>y
                                         @endforeach
                                     </table>
                                     <!-- Add Service button-->
@@ -375,7 +384,7 @@
                     </div>
 
                     <!-- Modal body -->
-                    <form method="POST" action="/addservicetocustomer">
+                    <form method="POST" action="{{ route('addservicetocustomer') }}">
                         <div class="modal-body">
                             {{ csrf_field() }}
                             <!-- Form Row        -->
@@ -394,7 +403,6 @@
                                             <option value="{{ $s->id }}">{{ $s->name }}</option>
                                         @endforeach
                                     </select>
-
 
                                 </div>
                                 <!-- Form Group (location)-->
@@ -416,11 +424,6 @@
                                     <label class=" mb-1" for="inputEmailAddress">Set Reminder</label>
                                     <input type="checkbox" id="reminder" name="reminder">
                                 </div>
-                                <!-- Form Group (email)-->
-                                <div class="col-md-12">
-                                    <label class=" mb-1" for="inputEmailAddress">Is paid?</label>
-                                    <input type="checkbox" id="paid_status" name="paid_status">
-                                </div>
                                 <div class="col-md-12">
                                     <label class=" mb-1" for="inputEmailAddress">Notes</label>
                                     <input type="text" id="notes" name="notes">
@@ -435,6 +438,49 @@
                 </div>
             </div>
         </div>
+
+        <!-- Edit ServicetoCustomer Modal -->
+        <div class="modal fade" id="editServicetoCustomerModal" tabindex="-1" role="dialog" aria-labelledby="editServicetoCustomerModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editServicetoCustomerModalLabel">Edit Service</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    @if(isset($b))
+                    <form id="editServiceToCustomerForm" method="POST" action="{{ route('servicetocustomer.update', ['servicetocustomer' => $b->id]) }}">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <input type="hidden" name="customer_id" value="{{ $cus->id }}">
+                            <!-- Assuming $services is defined and contains all available services -->
+                            <div class="form-group">
+                                <label for="service_id">Service</label>
+                                <select class="form-control" name="service_id" id="service_id">
+                                    @foreach ($services as $service)
+                                        <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="price">Price</label>
+                                <input type="number" class="form-control" name="price" id="price" required>
+                            </div>
+                            <!-- Add additional fields as necessary -->
+                            <!-- ... -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                    @endif
+                </div>
+            </div>
+        </div>
+
 
         <!-- Add Payment Modal -->
         <div class="modal" id="addPaymentModal">
@@ -518,8 +564,53 @@
             </div>
         </div>
 
+        <!-- Renewal Modal -->
+        <div class="modal fade" id="renewServiceModal" tabindex="-1" role="dialog" aria-labelledby="renewServiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="renewServiceModalLabel">Renew Service</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @if(isset($service))
+                    <form method="POST" action="{{ route('service.renew', ['id' => $service->id]) }}">
+                        @csrf
+                        <input type="hidden" name="service_id" id="modalServiceId">
+                        <div class="form-group">
+                            <label for="newPrice">Price</label>
+                            <input type="number" class="form-control" id="newPrice" name="new_price" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newExpirationDate">New Expiration Date</label>
+                            <input type="date" class="form-control" id="newExpirationDate" name="new_expiration_date" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Confirm Renewal</button>
+                        </div>
+                    </form>
+                @endif
+                </div>
+            </div>
+        </div>
 
+                                           
         <script>
+
+            function confirmDelete(serviceId, hasReminder) {
+                if (hasReminder === 'true') {
+                    alert('Please disable the reminder for this service before attempting to delete it.');
+                    return;
+                }
+                if (confirm('Are you sure you want to delete this service?')) {
+                    document.getElementById('delete_service_form_' + serviceId).submit();
+                }
+}
+
+
+
             $(document).ready(function() {
                 $('.submit-form').on('click', function(e) {
                     e.preventDefault();
@@ -548,6 +639,89 @@
                         'getservicetocustomer_id').value
                     console.log(document.getElementsByClassName('getservicetocustomer_id').value);
                 })
+
+                $('form[id^="delete_service_form_"]').on('submit', function(e) {
+                    e.preventDefault();
+
+                    let form = $(this);
+                    let formActionUrl = form.attr('action');
+                    let formData = form.serialize();
+
+                    $.ajax({
+                        url: formActionUrl,
+                        type: 'POST',
+                        data: formData,
+                        success: function(response) {
+                            console.log(response);
+                            location.reload();
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) {
+                            alert('Failed to delete the service: ' + thrownError);
+                        }
+                    });
+                });
+
+                $('.btn-edit-service').click(function() {
+                    var servicetocustomerId = $(this).data('id');
+                    var url = `/servicetocustomer/${servicetocustomerId}/edit`;
+
+                    $.get(url, function(data) {
+                        $('#editServiceToCustomerForm [name="service_id"]').val(data.service_id);
+                        $('#editServiceToCustomerForm [name="price"]').val(data.price);
+                        $('#editServiceToCustomerForm [name="expiration"]').val(data.expiration);
+                        $('#editServiceToCustomerForm [name="reminder"]').prop('checked', data.reminder);
+                        $('#editServiceToCustomerForm [name="paid_status"]').prop('checked', data.paid_status);
+                        $('#editServiceToCustomerForm [name="notes"]').val(data.notes);
+
+                        $('#editServiceToCustomerForm').attr('action', '/servicetocustomer/' + servicetocustomerId);
+                        $('#editServicetoCustomerModal').modal('show');
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        alert("Error: " + textStatus + ": " + errorThrown);
+                    });
+                });
+
+                $('.reminder_changer').change(function() {
+                    let serviceToCustomerId = $(this).data('id');
+                    let newReminderStatus = $(this).is(':checked') ? 1 : 0;
+
+                    $.ajax({
+                        url: '/servicetocustomer/update_reminder_status',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            id: serviceToCustomerId,
+                            reminder: newReminderStatus
+                        },
+                        success: function(response) {
+                            console.log(response);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(error);
+                        }
+                    });
+                });
+
+
+                $('.btn-renew-service').on('click', function() {
+                    const serviceId = $(this).data('id');
+                    const serviceName = $(this).data('serviceName');
+                    const price = $(this).data('price');
+                    const expiration = $(this).data('expiration');
+
+                    // Calculate new expiration date (e.g., add one year)
+                    const currentExpirationDate = new Date(expiration);
+                    const newExpirationDate = new Date(currentExpirationDate.setFullYear(currentExpirationDate.getFullYear() + 1)).toISOString().split('T')[0];
+
+                    // Fill the modal with the service data
+                    $('#modalServiceId').val(serviceId);
+                    $('#newPrice').val(price);
+                    $('#newExpirationDate').val(newExpirationDate);
+
+                    // Show the modal
+                    $('#renewServiceModal').modal('show');
+                });
+              
+
             });
 
             function openpaynowmdal(id) {
