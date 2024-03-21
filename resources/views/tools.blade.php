@@ -34,6 +34,12 @@
                             <h1 class="h3 mb-2 text-gray-800">Tools</h1>
                         </div>
                     </div>
+
+                    <!-- Activity Log Button -->
+                    <div class="mb-4">
+                        <a href="{{ route('activity.log') }}" class="btn btn-primary">View Activity Log</a>
+                    </div>
+
                     <!-- Export Button -->
                     <div class="mb-4">
                         <form action="{{ route('export.customers') }}" method="POST">

@@ -7,6 +7,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServicetoCustomer extends Model
 {
+    protected static function booted()
+    {
+        static::created(function ($model) {
+            ActivityLog::create([
+                'loggable_type' => get_class($model),
+                'loggable_id' => $model->id,
+                'action' => 'created',
+                'changes' => json_encode($model->getChanges()),
+                'ip_address' => request()->ip(),
+            ]);
+        });
+
+        static::updated(function ($model) {
+            ActivityLog::create([
+                'loggable_type' => get_class($model),
+                'loggable_id' => $model->id,
+                'action' => 'updated',
+                'changes' => json_encode($model->getChanges()),
+                'ip_address' => request()->ip(),
+            ]);
+        });
+    }
+
     use HasFactory;
 
     protected $fillable = ['customer_id', 'service_id', 'price', 'expiration', 'reminder', 'payment_id', 'notes'];

@@ -21,7 +21,6 @@
 
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
                 <x-topbar></x-topbar>
                 <!-- End of Topbar -->
@@ -30,78 +29,57 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <div class="row">
-                        <div class="col">
-                            <h1 class="h3 mb-2 text-gray-800">Service Details</h1>
+                    <div class='row'>
+                        <div class='col'>
+                            <h1 class="h3 mb-2 text-gray-800">Activity Log</h1>
                         </div>
                     </div>
-                    <!-- DataTales Example -->
+              
                     <div class="card shadow mb-4">
-
                         <div class="card-body">
                             <div class="table-responsive">
-
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
-                                    <tr>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Is Paid</th>
-                                        <th>Payment ID</th>
-                                    </tr>
-                                    </thead>
-                                    @foreach($renewals as $renewal)
                                         <tr>
-                                            <td>{{ $renewal->start_date }}</td>
-                                            <td>{{ $renewal->end_date }}</td>
-                                            <td>{{ $renewal->is_paid ? 'Yes' : 'No' }}</td>
-                                            <td>{{ $renewal->payment_id }}</td>
+                                            <th>User IP</th>
+                                            <th>Action</th>
+                                            <th>Model</th>
+                                            <th>Model ID</th>
+                                            <th>Changes</th>
+                                            <th>Date/Time</th>
                                         </tr>
-                                    @endforeach
-                                </table>
-
-                            </div>
-
-                            <div class="table-responsive">
-
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                    <tr>
-                                        <th>Payment Id</th>
-                                        <th>Payment Date</th>
-                                        <th>Amount</th>
-                                        <th>Payment Type</th>
-                                        <th>Notes</th>
-                                    </tr>
                                     </thead>
-                                    @foreach($payments as $payment)
+                                    <tbody>
+                                 
+                         
+                                        @foreach($activityLogs as $log)
                                         <tr>
-                                            <td>{{ $payment->id }}</td>
-                                            <td>{{ $payment->payment_date }}</td>
-                                            <td>{{ $payment->price }}</td>
-                                            <td>{{ $payment->payment_type }}</td>
-                                            <td>{{ $payment->notes }}</td>
-                                        </tr>
-                                    @endforeach
+                                             <td>{{ $log->ip_address }}</td> 
+                                             <td>{{ $log->action }}</td> 
+                                             <td>{{ $log->loggable_type }}</td> 
+                                             <td>{{ $log->loggable_id }}</td> 
+                                             <td>{{ $log->changes }}</td> 
+                                             <td>{{ $log->created_at }}</td> 
+                                         </tr> 
+                                         @endforeach
+                                    </tbody>
                                 </table>
-
                             </div>
                         </div>
                     </div>
+             
+
+
 
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
-
             <!-- Footer -->
             <x-footer></x-footer>
             <!-- End of Footer -->
-
         </div>
         <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
 
@@ -132,7 +110,10 @@
 
 
 
+
     <x-main_scripts></x-main_scripts>
+
 </body>
+
 
 </html>

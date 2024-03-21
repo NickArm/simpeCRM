@@ -36,7 +36,7 @@
             <span>Show Payments</span></a>
     </li>
     <li class="nav-item active">
-        <a class="nav-link" href="/payments">
+        <a class="nav-link" href="/tools">
             <i class="fas fa-fw fa-credit-card"></i>
             <span>Tools</span></a>
     </li>

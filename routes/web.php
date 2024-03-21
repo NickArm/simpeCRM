@@ -61,3 +61,5 @@ Route::get('/servicetocustomer/{servicetocustomer}/details', [App\Http\Controlle
 Route::get('/tools', [App\Http\Controllers\CustomersController::class, 'showTools'])->name('tools.show');
 Route::post('/export-customers', [App\Http\Controllers\CustomersController::class, 'exportCustomers'])->name('export.customers');
 Route::post('/import-customers', [App\Http\Controllers\CustomersController::class, 'importCustomers'])->name('import.customers');
+
+Route::get('/activity-log', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity.log');
